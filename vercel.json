@@ -12,6 +12,12 @@
       "commands": {
         "install": "npm install --force"
       }
+    },
+    "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
     }
+  ]
   }
   
