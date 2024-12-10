@@ -8,15 +8,12 @@
     "build": {
       "env": {
         "NPM_CONFIG_FORCE": "true"
-      },
-      "commands": {
-        "install": "npm install --force"
       }
     },
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "/index.js"
+        "dest": "/"
       }
     ]
   }
