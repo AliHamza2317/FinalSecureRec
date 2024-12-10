@@ -1,20 +1,24 @@
 {
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/node"
-      }
-    ],
-    "build": {
-      "env": {
-        "NPM_CONFIG_FORCE": "true"
-      }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
     },
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/"
-      }
-    ]
-  }
-  
+    {
+      "src": "src/**/*.jsx",
+      "use": "@vercel/node"
+    }
+  ],
+  "build": {
+    "env": {
+      "NPM_CONFIG_FORCE": "true"
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/"
+    }
+  ]
+}
