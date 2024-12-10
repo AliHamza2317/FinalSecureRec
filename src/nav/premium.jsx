@@ -135,7 +135,7 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      axios.post('https://4396-34-116-79-139.ngrok-free.app/upload', formData, {
+      axios.post('https://95a7-34-80-157-54.ngrok-free.app/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
