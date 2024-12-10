@@ -1,0 +1,17 @@
+{
+    "builds": [
+      {
+        "src": "package.json",
+        "use": "@vercel/node"
+      }
+    ],
+    "build": {
+      "env": {
+        "NPM_CONFIG_FORCE": "true"
+      },
+      "commands": {
+        "install": "npm install --force"
+      }
+    }
+  }
+  
