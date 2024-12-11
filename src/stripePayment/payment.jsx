@@ -21,7 +21,7 @@ const Payment = () => {
         setLoading(false);
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      console.error('Error creating checkout session: ', error);
       setLoading(false);
     }
   };
