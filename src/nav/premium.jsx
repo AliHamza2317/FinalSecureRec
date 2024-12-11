@@ -9,7 +9,7 @@ import { styled } from '@mui/material/styles';
 import dashboardIcon from "./assets/icons8-dashboard-24.png";
 import UploadIcon from './assets/icons8-upload-80.png';
 import { jwtDecode } from 'jwt-decode';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from 'recharts';
 
 const drawerWidth = 240;
 
@@ -398,42 +398,42 @@ const Premium = () => {
                 margin: '20px auto',
               }}
             >
-              <BarChart
-                width={800}
-                height={300}
-                data={chartData.identifiedIssues}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#8884d8" />
-              </BarChart>
-              <BarChart
-                width={800}
-                height={300}
-                data={chartData.subcategories}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#82ca9d" />
-              </BarChart>
+              <ResponsiveContainer width="100%" height={300}>
+                    <BarChart
+                      data={chartData.identifiedIssues}
+                      margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="value" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart
+                      data={chartData.subcategories}
+                      margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="value" fill="#82ca9d" />
+                    </BarChart>
+                  </ResponsiveContainer>
               {/* <Typography variant="h6" sx={{ textAlign: 'center', marginBottom: '10px' }}>
                 Sentiment Analysis
               </Typography> */}
