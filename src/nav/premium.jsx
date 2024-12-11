@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { utils, writeFile } from 'xlsx';
 import Box from '@mui/material/Box';
@@ -8,8 +8,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 import dashboardIcon from "./assets/icons8-dashboard-24.png";
 import UploadIcon from './assets/icons8-upload-80.png';
-import { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 const drawerWidth = 240;
 
@@ -69,42 +69,44 @@ const Button = styled('button')(({ theme }) => ({
 const Premium = () => {
   const [user, setUser] = useState(null);
 
-useEffect(() => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    const decodedToken = jwtDecode(token);
-    console.log("Decoded Token:", decodedToken);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log("Decoded Token:", decodedToken);
 
-    const userId = decodedToken.userId;
+      const userId = decodedToken.userId;
 
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`https://secure-rec-backend.vercel.app/users/users/${userId}`, {
-          headers: {
-            'x-access-token': token, // or 'Authorization': `Bearer ${token}`
-          },
-        });
-        const data = await response.json();
-        console.log("Fetched User Data:", data);
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch(`https://secure-rec-backend.vercel.app/users/users/${userId}`, {
+            headers: {
+              'x-access-token': token, // or 'Authorization': `Bearer ${token}`
+            },
+          });
+          const data = await response.json();
+          console.log("Fetched User Data:", data);
 
-        if (response.ok) {
-          setUser(data); // Update this line
-        } else {
-          console.error("Failed to fetch user details");
+          if (response.ok) {
+            setUser(data); // Update this line
+          } else {
+            console.error("Failed to fetch user details");
+          }
+        } catch (error) {
+          console.error("Error fetching user details:", error);
         }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    };
+      };
 
-    fetchUserData();
-  }
-}, []);
-  
+      fetchUserData();
+    }
+  }, []);
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
   const [results, setResults] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showCharts, setShowCharts] = useState(false);
+  const [chartData, setChartData] = useState({});
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -135,7 +137,7 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      axios.post('https://95a7-34-80-157-54.ngrok-free.app/upload', formData, {
+      axios.post('https://2c49-34-82-239-92.ngrok-free.app/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -145,6 +147,7 @@ useEffect(() => {
           console.log(response.data);
           setResults(response.data);
           setUploadStatus(`File "${selectedFile.name}" uploaded and analyzed successfully!`);
+          processChartData(response.data);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -201,6 +204,41 @@ useEffect(() => {
     }
   };
 
+  const processChartData = (data) => {
+    const chartData = {};
+    chartData.totalReviews = data.length;
+
+    const sentiments = data.map(review => review['Sentiment_Result'].toLowerCase());
+    chartData.positiveReviews = sentiments.filter(sentiment => sentiment.includes('pos')).length;
+    chartData.negativeReviews = sentiments.filter(sentiment => sentiment.includes('neg')).length;
+  
+    const identifiedIssues = {};
+    data.forEach(review => {
+      const issue = review['Identify issue'];
+      if (!identifiedIssues[issue]) {
+        identifiedIssues[issue] = 0;
+      }
+      identifiedIssues[issue]++;
+    });
+    chartData.identifiedIssues = Object.keys(identifiedIssues).map(issue => ({ name: issue, value: identifiedIssues[issue] }));
+  
+    const subcategories = {};
+    data.forEach(review => {
+      const subcategory = review['Subcategory'];
+      if (!subcategories[subcategory]) {
+        subcategories[subcategory] = 0;
+      }
+      subcategories[subcategory]++;
+    });
+    chartData.subcategories = Object.keys(subcategories).map(subcategory => ({ name: subcategory, value: subcategories[subcategory] }));
+  
+    setChartData(chartData);
+  };
+
+  const handleToggleCharts = () => {
+    setShowCharts(!showCharts);
+  };
+
   return (
     <Box
       sx={{
@@ -226,7 +264,7 @@ useEffect(() => {
           position: 'relative',
         }}
       >
-        {uploadStatus && (
+                {uploadStatus && (
           <AlertBox>
             <Typography variant="body2">
               {uploadStatus}
@@ -343,6 +381,109 @@ useEffect(() => {
               >
                 Download Results
               </Button>
+              <Button
+                onClick={handleToggleCharts}
+                sx={{ marginTop: '10px' }}
+                disabled={!results || results.length === 0}
+              >
+                Toggle Charts
+              </Button>
+            </Box>
+          )}
+          {showCharts && (
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '800px',
+                margin: '20px auto',
+              }}
+            >
+              <BarChart
+                width={800}
+                height={300}
+                data={chartData.identifiedIssues}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+              <BarChart
+                width={800}
+                height={300}
+                data={chartData.subcategories}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#82ca9d" />
+              </BarChart>
+              {/* <Typography variant="h6" sx={{ textAlign: 'center', marginBottom: '10px' }}>
+                Sentiment Analysis
+              </Typography> */}
+              <br />
+              <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                {/* <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    Positive Reviews
+                  </Typography>
+                  <Typography variant="body1">
+                    {chartData.positiveReviews}
+                  </Typography>
+                </Box> */}
+                {/* <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    Negative Reviews
+                  </Typography>
+                  <Typography variant="body1">
+                    {chartData.negativeReviews}
+                  </Typography>
+                </Box> */}
+               <Box sx={{
+                      textAlign: 'center',
+                      backgroundColor: '#f5f5f5',
+                      padding: '20px',
+                      borderRadius: '8px',
+                      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                      maxWidth: '250px',
+                      margin: '0 auto'
+                    }}>
+                      <Typography variant="h6" sx={{
+                        fontWeight: 'bold',
+                        color: '#2a2a2a',
+                        fontSize: '1.2rem',
+                        letterSpacing: '0.5px',
+                        marginBottom: '8px'
+                      }}>
+                        Total Reviews
+                      </Typography>
+                      <Typography variant="h4" sx={{
+                        color: '#4caf50',
+                        fontWeight: '700',
+                        fontSize: '2rem',
+                        letterSpacing: '0.5px',
+                        marginTop: '5px'
+                      }}>
+                        {chartData.totalReviews}
+                      </Typography>
+                    </Box>
+              </Box>
             </Box>
           )}
         </Box>
