@@ -9,7 +9,7 @@ const Payment = () => {
   const handleClick = async () => {
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:3000/users/create-checkout-session');
+      const response = await axios.post('https://secure-rec-backend.vercel.app/users/create-checkout-session');
       const sessionData = response.data;
       const stripe = await stripePromise;
       const { error } = await stripe.redirectToCheckout({

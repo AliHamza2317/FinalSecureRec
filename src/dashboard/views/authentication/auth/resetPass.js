@@ -20,7 +20,7 @@ const AuthResetPass = () => {
 
     const handleResetPassword = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/users/reset-password', {
+            const response = await axios.post('https://secure-rec-backend.vercel.app/users/reset-password', {
                 token,
                 newPassword: password
             });
