@@ -4,8 +4,17 @@ import { Link } from "react-scroll";
 // Assets
 import CloseIcon from "../../assets/svg/CloseIcon";
 import LogoIcon from "../../assets/svg/Logo";
-
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 export default function Sidebar({ sidebarOpen, toggleSidebar }) {
+  const navigate = useNavigate(); // Initialize navigate
+  const handleSignUp = (event) => {
+    event.preventDefault(); // Prevent default behavior of anchor tag
+    navigate('/signup'); // Navigate to '/login' route
+  };
+  const handleLogin = (event) => {
+    event.preventDefault(); // Prevent default behavior of anchor tag
+    navigate('/login'); // Navigate to '/login' route
+  };
   return (
     <Wrapper className="animate darkBg" sidebarOpen={sidebarOpen}>
       <SidebarHeader className="flexSpaceCenter">
@@ -74,7 +83,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             smooth={true}
             offset={-60}
           >
-            Blog
+            Faqs
           </Link>
         </li>
         <li className="semiBold font15 pointer">
@@ -108,12 +117,12 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
       </UlStyle>
       <UlStyle className="flexSpaceCenter">
         <li className="semiBold font15 pointer">
-          <a href="/" style={{ padding: "10px 30px 10px 0" }} className="whiteColor">
+          <a href="/login" style={{ padding: "10px 30px 10px 0" }} onClick={handleLogin} className="whiteColor">
             Log in
           </a>
         </li>
         <li className="semiBold font15 pointer flexCenter">
-          <a href="/" className="radius8 lightBg" style={{ padding: "10px 15px" }}>
+          <a href="/signup" className="radius8 lightBg" onClick={handleSignUp} style={{ padding: "10px 15px" }}>
             Get Started
           </a>
         </li>

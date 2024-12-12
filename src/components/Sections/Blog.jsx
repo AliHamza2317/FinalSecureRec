@@ -8,7 +8,7 @@ import Faqs from "../../nav/faqs";
 
 export default function Blog() {
   return (
-    <Wrapper id="blog">
+    <Wrapper id="faqs">
       <div className="whiteBg">
         <div className="container">
           <HeaderInfo>
