@@ -137,7 +137,7 @@ const Premium = () => {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      axios.post('https://e899-34-73-19-79.ngrok-free.app/upload', formData, {
+      axios.post('https://1bc6-34-173-224-192.ngrok-free.app/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
